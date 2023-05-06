@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.http import HttpResponse, HttpRequest
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 
 
 def routing(request: HttpRequest) -> HttpResponse:
@@ -28,5 +28,6 @@ def routing(request: HttpRequest) -> HttpResponse:
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'.*', routing),
+    # re_path(r'.*', routing),
+    re_path(r'.*', include('mock_api.urls'))
 ]
