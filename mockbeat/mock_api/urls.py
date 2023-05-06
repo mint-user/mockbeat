@@ -3,6 +3,7 @@ import re
 from django.http import HttpRequest, HttpResponse
 from django.urls import re_path
 from django.views.decorators.csrf import csrf_exempt
+from json import JSONDecodeError
 
 import json
 import pydantic
