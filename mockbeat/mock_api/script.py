@@ -1,25 +1,11 @@
 import uuid
 from http import HTTPStatus
-from json import JSONDecodeError
 
 import pydantic
-import json
 from typing import Tuple
 
-import requests
 
-
-def handle_request(request: requests.Request) -> Tuple[dict | str, int]:
-    # VALIDATE DATA TYPE
-    if request.headers.get('Content-Type') and request.headers['Content-Type'] == 'application/json':
-        try:
-            request_body = json.loads(request.body)
-        except JSONDecodeError as e:
-            return {'error': 'Invalid JSON: ' + str(e)}, HTTPStatus.BAD_REQUEST
-
-    else:
-        request_body = request.body
-
+def handle_request(request_body: dict | str) -> Tuple[dict | str, int]:
     # PARSE REQUEST
     class RequestModel(pydantic.BaseModel):
         amount: str
@@ -58,4 +44,4 @@ def handle_request(request: requests.Request) -> Tuple[dict | str, int]:
     return strategy_class().prepare_response(request_object)
 
 
-body, http_status = handle_request(request)
+body, http_status = handle_request(request_body)

@@ -42,7 +42,10 @@ class Endpoint(models.Model):
     # Override the update function to modify the Post data
     def save(self, *args, **kwargs) -> None:
         """Generate full URL to endpoint."""
-        self.url = urljoin(f'{self.service.base_url}/', self.url_part)  # noqa
+        stripped_base_url = self.service.base_url.strip('/')
+        stripped_url_part = self.url_part.strip('/')
+        self.url = urljoin(f'{stripped_base_url}/', f'{stripped_url_part}/')
+        # self.url = urljoin(f'{self.service.base_url}/', self.url_part)  # noqa
         super(Endpoint, self).save(*args, **kwargs)
 
     def create(self, name: str, service: Service, url_part: str, method: HTTPMethod) -> None:
