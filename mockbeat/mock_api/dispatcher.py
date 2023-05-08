@@ -1,6 +1,7 @@
 import json
 import re
 import pydantic
+from django.db.models import Model
 from django.http import HttpRequest, HttpResponse
 from django.urls.resolvers import RoutePattern
 from django.views.decorators.csrf import csrf_exempt
@@ -12,7 +13,7 @@ from json import JSONDecodeError
 import requests
 from mockbeat.settings import BASE_DIR
 
-from mock_api.models import Endpoint
+from mock_api.models import Endpoint, Strategy
 
 ENDPOINTS = [
     ('/qwe/*', 1),
@@ -53,15 +54,14 @@ class Dispatcher:
 
         ex_locals = {'request_body': request_body}
 
-        with open(f'{BASE_DIR}/mock_api/script.py') as f:
-            endpoint_logic = f.read()
-            # print(endpoint_logic)
-            exec(endpoint_logic, None, ex_locals)
-            # print(ex_locals['body'])
-            # print(ex_locals['http_status'])
-            return HttpResponse(
-                headers={'Content-Type': 'application/json'},
-                content=json.dumps(ex_locals['body']),
-                status=ex_locals['http_status'],
-            )
+        # RUN SCRIPT
+        endpoint_logic = Strategy.objects.filter(endpoint_id=endpoint_id)[0].script_body
 
+        exec(endpoint_logic, None, ex_locals)
+
+        # RETURN RESPONSE
+        return HttpResponse(
+            headers={'Content-Type': 'application/json'},
+            content=json.dumps(ex_locals['body']),
+            status=ex_locals['http_status'],
+        )

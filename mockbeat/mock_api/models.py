@@ -48,15 +48,8 @@ class Endpoint(models.Model):
         # self.url = urljoin(f'{self.service.base_url}/', self.url_part)  # noqa
         super(Endpoint, self).save(*args, **kwargs)
 
-    def create(self, name: str, service: Service, url_part: str, method: HTTPMethod) -> None:
-
-        Endpoint(
-            name=name,
-            service=service,
-            url_part=url_part,
-            method=method.value,
-            url=urljoin(f'{service.base_url}/', url_part),
-        ).save()
+    def __str__(self) -> str:
+        return f'{self.service} - {self.name}'
 
 
 class Context(models.Model):
@@ -66,7 +59,7 @@ class Context(models.Model):
 
     name = models.CharField(unique=True, null=False, max_length=255)
     endpoint_id = models.ForeignKey(Endpoint, on_delete=models.CASCADE)
-    script = models.TextField
+    script = models.TextField(blank=True)
 
 
 class Schema(models.Model):
@@ -76,7 +69,7 @@ class Schema(models.Model):
 
     name = models.CharField(unique=True, null=False, max_length=255)
     endpoint_id = models.ForeignKey(Endpoint, on_delete=models.CASCADE)
-    script = models.TextField
+    script = models.TextField(blank=True)
 
 
 class Strategy(models.Model):
@@ -86,7 +79,7 @@ class Strategy(models.Model):
 
     name = models.CharField(unique=True, null=False, max_length=255)
     endpoint_id = models.ForeignKey(Endpoint, on_delete=models.CASCADE)
-    script = models.TextField
+    script_body = models.TextField(blank=True)
 
 
 class Marker(models.Model):
@@ -96,5 +89,5 @@ class Marker(models.Model):
 
     name = models.CharField(unique=True, null=False, max_length=255)
     schema_id = models.ForeignKey(Schema, on_delete=models.CASCADE)
-    script = models.TextField
+    script = models.TextField(blank=True)
 

@@ -1,10 +1,11 @@
 from django.contrib import admin
-from django.db.models import Model
 
-from mock_api.models import Service, Endpoint
+from mock_api.models import Service, Endpoint, Strategy
 
 
-# Register your models here.
+@admin.register(Strategy)
+class StrategyAdmin(admin.ModelAdmin):
+    list_display = ('name', 'endpoint_id', 'script_body')
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
