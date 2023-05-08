@@ -1,8 +1,13 @@
 import uuid
+from enum import auto
 from http import HTTPStatus
 
 import pydantic
 from typing import Tuple
+
+from strenum import StrEnum
+
+
 
 
 def handle_request(request_body: dict | str) -> Tuple[dict | str, int]:
@@ -15,6 +20,12 @@ def handle_request(request_body: dict | str) -> Tuple[dict | str, int]:
     # SET MARKER
     marker = request_object.amount
 
+    # ENUMS
+    class PaymentStatus(StrEnum):
+        SUCCESS = auto()
+        PENDING = auto()
+        FAILED = auto()
+
     # STRATEGIES
     class BaseStrategy:
         status: str
@@ -23,7 +34,7 @@ def handle_request(request_body: dict | str) -> Tuple[dict | str, int]:
             raise NotImplemented
 
     class SuccessStrategy(BaseStrategy):
-        status = 'success'
+        status = PaymentStatus.SUCCESS
 
         def prepare_response(self, request_object: 'RequestModel') -> Tuple[dict, int]:
             return {
@@ -33,12 +44,16 @@ def handle_request(request_body: dict | str) -> Tuple[dict | str, int]:
             }, HTTPStatus.OK
 
     class FailedStrategy(SuccessStrategy):
-        status = 'failed'
+        status = PaymentStatus.FAILED
+
+    class PendingStrategy(SuccessStrategy):
+        status = PaymentStatus.PENDING
 
     # CONTEXT
     strategy_class = {
         '1': SuccessStrategy,
         '2': FailedStrategy,
+        '3': PendingStrategy,
     }.get(marker, SuccessStrategy)
 
     return strategy_class().prepare_response(request_object)

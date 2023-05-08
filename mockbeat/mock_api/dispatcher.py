@@ -9,6 +9,8 @@ from typing import Tuple
 import uuid
 from http import HTTPStatus
 from json import JSONDecodeError
+from strenum import StrEnum
+from enum import auto
 
 import requests
 from mockbeat.settings import BASE_DIR
