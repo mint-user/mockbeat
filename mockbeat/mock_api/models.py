@@ -9,6 +9,7 @@ class Service(models.Model):
 
     class Meta:
         db_table = 'services'
+        verbose_name_plural = 'Services'
 
     name = models.CharField(unique=True, null=False, max_length=255)
     base_url = models.CharField(unique=True, null=False, max_length=100)

@@ -7,36 +7,35 @@ from mock_api.models import Service, Endpoint, Strategy
 from mock_api.widjets import HtmlEditor
 
 
-# class AppAdminForm(ModelForm):
-#     model = Strategy
-#
-#     class Meta:
-#         fields = ('script_body',)
-#         widgets = {
-#             'code': HtmlEditor(attrs={'style': 'width: 90%; height: 100%;'}),
-#             # 'code': HtmlEditor(attrs={'style': 'width: 90%; height: 1000;'}),
-#         }
-
-# class MyModelAdmin(admin.ModelAdmin):
-#     formfield_overrides = {
-#         models.TextField: {'widget': Textarea(attrs={'rows': 10, 'cols': 100})},
-#     }
-#
-# admin.site.register(MyModel, MyModelAdmin)
-
-
 @admin.register(Strategy)
 class StrategyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'endpoint_id', 'script_body')
+    list_display = ('name', 'endpoint_id')
     # add_form_template = AppAdminForm
     formfield_overrides = {
-        models.TextField: {'widget': HtmlEditor(attrs={'rows': 50, 'cols': 200, 'class': 'python-editor', 'data-mimetype': 'text/x-python', 'style': 'height: 600px;'})},
+        models.TextField: {
+            'widget': HtmlEditor(
+                attrs={
+                    'rows': 50,
+                    'cols': 200,
+                    'class': 'python-editor',
+                    'data-mimetype': 'text/x-python',
+                    'style': 'height: 600px;',
+                },
+            ),
+        },
     }
 
+    # def formfield_for_dbfield(self, script_body, **kwargs):
+    #     kwargs['initial'] = '123qwerty'
+    #     return super().formfield_for_dbfield(script_body, **kwargs)
 
-# class AppAdmin(admin.ModelAdmin):
-#     form = AppAdminForm
-# admin.site.register(App, AppAdmin)
+    def __init__(self, *args, **kwargs):
+        # breakpoint()
+        super().__init__(*args, **kwargs)
+        breakpoint()
+        # if self.instance and self.instance.is_active is not None:
+        #     self.fields['is_active'].initial = 'Активен' if self.instance.is_active else 'Неактивен'
+        self.instance.script_body = 'qwerty123'
 
 
 @admin.register(Service)
